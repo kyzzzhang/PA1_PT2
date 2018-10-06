@@ -35,11 +35,16 @@ public class CdFilter extends ConcurrentFilter {
 	
 	public void process() {
 		processLine("");
+		output.add("COMPLETED");
 	}
 	
 	public String processLine(String line) {
 		ConcurrentREPL.currentWorkingDirectory = dirToSet;
 		return null;
+	}
+	
+	public boolean isDone() {
+		return output.contains("COMPLETED");
 	}
 	
 	public String toString() {

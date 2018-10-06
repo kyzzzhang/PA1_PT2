@@ -14,7 +14,6 @@ public class ConcurrentREPL {
 		Scanner s = new Scanner(System.in);
 		System.out.print(Message.WELCOME);
 		LinkedList<Thread> threads = new LinkedList<Thread>();
-		LinkedList<String> commandsList =  new LinkedList<String>();
 		LinkedList<Thread> lastThreads = new LinkedList<Thread>();
 		String command;
 		while(true) {
@@ -24,7 +23,6 @@ public class ConcurrentREPL {
 			if(command.equals("exit")) {
 				break;
 			} else if(!command.trim().equals("") && ! (command.trim().equals("repel_jobs")) && !(command.trim().contains("kill"))) {
-				commandsList.add(command);
 				//building the filters list from the command
 				String[] commandList = command.split("\\s+");
 				String symbol = commandList[commandList.length-1];
@@ -38,20 +36,20 @@ public class ConcurrentREPL {
 				ConcurrentFilter filterlist = ConcurrentCommandBuilder.createFiltersFromCommand(command);
 				
 				while(filterlist != null) {
-//					System.out.println(filterlist.toString());
+					//System.out.println(filterlist.toString());
 					Thread nextFilter = new Thread(filterlist);
-					threads.add(nextFilter);
-					if(filterlist.getNext() == null) {
-						lastThreads.add(nextFilter);
-					}
+					//threads.add(nextFilter);
 					nextFilter.start();
+					if(filterlist.getNext() == null) {
+						try {
+							nextFilter.join();
+						} catch (InterruptedException e) {}
+					}
+					
 					//System.out.println(nextFilter.getState());
-					try {
-						nextFilter.join();
-					} catch (InterruptedException e) {}
+					
 					//System.out.println(nextFilter.getState());
 					filterlist = (ConcurrentFilter) filterlist.getNext();
-					
 				}
 				
 				if (backgroundMode) {
