@@ -21,7 +21,15 @@ public class ConcurrentREPL {
 			command = s.nextLine();
 			if(command.equals("exit")) {
 				break;
-			} else if(!command.trim().equals("") && ! (command.trim().equals("repel_jobs")) && !(command.trim().contains("kill"))) {
+			} else if (command.trim().equals("repl_jobs")) {
+				int number = 1;
+				for (Thread t: threads) {
+					if (t.isAlive()) {
+						System.out.println(number + ". " + t.getName() + " & ");
+						number++;
+					}
+				}
+			} else if(!command.trim().equals("")) {
 				//building the filters list from the command
 				String[] commandList = command.split("\\s+");
 				String symbol = commandList[commandList.length-1];
@@ -37,7 +45,7 @@ public class ConcurrentREPL {
 				while(filterlist != null) {
 //					System.out.println(filterlist.toString());
 					Thread nextFilter = new Thread(filterlist);
-					threads.add(nextFilter);
+//					threads.add(nextFilter);
 					nextFilter.start();
 					//System.out.println(nextFilter.getState());
 					try {
@@ -51,6 +59,8 @@ public class ConcurrentREPL {
 				//System.out.println("out1");
 				
 				if (backgroundMode) {
+					LinkedList<Thread> nextLine = new LinkedList<Thread>();
+					String concurrentCommand = s.nextLine();
 					for (Thread t: threads) {
 						try {
 							t.join();
@@ -61,14 +71,6 @@ public class ConcurrentREPL {
 				}
 //				System.out.println("out2");
 				
-			} else if (command.trim().equals("repl_jobs")) {
-				int number = 1;
-				for (Thread t: threads) {
-					if (t.isAlive()) {
-						System.out.println(number + ". " + t.getName() + " & ");
-						number++;
-					}
-				}
 			} else if (command.contains("kill")) {
 				String[] killList = command.split("//s+");
 				int killNumber = Integer.parseInt(killList[1]);
