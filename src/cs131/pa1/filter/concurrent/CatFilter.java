@@ -54,4 +54,12 @@ public class CatFilter extends ConcurrentFilter{
 			return null;
 		}
 	}
+	
+	public String toString() {
+		return "cat";
+	}
+	
+	public boolean isDone() {
+		return output.contains("COMPLETED");
+	}
 }

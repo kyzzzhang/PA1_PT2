@@ -48,4 +48,8 @@ public class RedirectFilter extends ConcurrentFilter {
 		}
 		return null;
 	}
+	
+	public String toString() {
+		return ">";
+	}
 }

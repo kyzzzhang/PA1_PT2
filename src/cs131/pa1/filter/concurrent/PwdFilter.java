@@ -15,4 +15,12 @@ public class PwdFilter extends ConcurrentFilter {
 	public String processLine(String line) {
 		return ConcurrentREPL.currentWorkingDirectory;
 	}
+	
+	public String toString() {
+		return "pwd";
+	}
+	
+	public boolean isDone() {
+		return output.contains("COMPLETED");
+	}
 }

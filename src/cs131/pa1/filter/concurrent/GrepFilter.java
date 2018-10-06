@@ -23,4 +23,8 @@ public class GrepFilter extends ConcurrentFilter {
 			return null;
 		}
 	}
+	
+	public String toString() {
+		return "grep";
+	}
 }

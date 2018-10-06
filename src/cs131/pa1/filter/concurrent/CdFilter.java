@@ -41,4 +41,8 @@ public class CdFilter extends ConcurrentFilter {
 		ConcurrentREPL.currentWorkingDirectory = dirToSet;
 		return null;
 	}
+	
+	public String toString() {
+		return "cd";
+	}
 }

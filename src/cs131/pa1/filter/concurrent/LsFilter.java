@@ -25,4 +25,8 @@ public class LsFilter extends ConcurrentFilter{
 	public String processLine(String line) {
 		return flist[counter++].getName();
 	}
+	
+	public String toString() {
+		return "ls";
+	}
 }

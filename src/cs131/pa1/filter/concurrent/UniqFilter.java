@@ -19,4 +19,8 @@ public class UniqFilter extends ConcurrentFilter{
 			return line;
 		}
 	}
+	
+	public String toString() {
+		return "uniq";
+	}
 }

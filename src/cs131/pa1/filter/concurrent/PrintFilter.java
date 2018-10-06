@@ -6,15 +6,33 @@ public class PrintFilter extends ConcurrentFilter {
 	}
 	
 	public void process() {
-		while(!isDone()) {
-			processLine(input.poll());
+//		while(!isDone()) {
+//			processLine(input.poll());
+//		}
+//		System.out.println("enter print");
+//		System.out.println(!input.isEmpty());
+//		for(String s : input) {
+//			System.out.println("input"+s);
+//		}
+		while(!input.isEmpty()) {
+			String line = input.poll();
+			if(line !=null && !line.equals("COMPLETED")) {
+				processLine(line);
+//				System.out.println(line);
+			}
 		}
 	}
 	
 	public String processLine(String line) {
-		if(line !=null && !line.equals("COMPLETED")) {
-			System.out.println(line);
-		}
+		System.out.println(line);
 		return null;
 	}
+	
+	public String toString() {
+		return "print";
+	}
+	
+//	public boolean isDone() {
+//		return output.contains("COMPLETED");
+//	}
 }

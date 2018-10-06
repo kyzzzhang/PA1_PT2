@@ -58,12 +58,12 @@ public abstract class ConcurrentFilter extends Filter implements Runnable{
 		//For each filter that requires input, an extra line "COMPLETED" is added to the output queue
 		//Only when that line is the head of the input queue, meaning the filter execution is completed
 		//For any other cases, the filter execution is not completed
-		if(input == null || input.peek() == null) {
-			return false;
+		if(input != null && input.peek() != null && input.peek().equals("COMPLETED")) {
+			return true;
 		} else {
-			if(input.peek().equals("COMPLETED")) {
-				return true;
-			}
+//			if(input.peek().equals("COMPLETED")) {
+//				return true;
+//			}
 			return false;
 		}
 	}
