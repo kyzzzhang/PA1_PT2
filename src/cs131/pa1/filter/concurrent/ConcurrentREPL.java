@@ -14,7 +14,6 @@ public class ConcurrentREPL {
 		Scanner s = new Scanner(System.in);
 		System.out.print(Message.WELCOME);
 		LinkedList<Thread> threads = new LinkedList<Thread>();
-		LinkedList<Thread> lastThreads = new LinkedList<Thread>();
 		String command;
 		while(true) {
 			//obtaining the command from the user
@@ -22,15 +21,7 @@ public class ConcurrentREPL {
 			command = s.nextLine();
 			if(command.equals("exit")) {
 				break;
-			} else if (command.trim().equals("repl_jobs")) {
-				int number = 1;
-				for (Thread t: threads) {
-					if (t.isAlive()) {
-						System.out.println(number + ". " + t.getName() + " & ");
-						number++;
-					}
-				}
-			} else if(!command.trim().equals("")) {
+			} else if(!command.trim().equals("") && ! (command.trim().equals("repel_jobs")) && !(command.trim().contains("kill"))) {
 				//building the filters list from the command
 				String[] commandList = command.split("\\s+");
 				String symbol = commandList[commandList.length-1];
@@ -40,47 +31,47 @@ public class ConcurrentREPL {
 					int symbolIndex = command.indexOf(symbol);
 					command = command.substring(0, symbolIndex);
 				}
+				
 				ConcurrentFilter filterlist = ConcurrentCommandBuilder.createFiltersFromCommand(command);
-				//System.out.println(filterlist.toString());
-				Thread last = Thread.currentThread();
-				while (filterlist != null) {
-//					System.out.println("enter");
-					Thread nextFilter = new Thread(filterlist,command);
+				
+				while(filterlist != null) {
+//					System.out.println(filterlist.toString());
+					Thread nextFilter = new Thread(filterlist);
+					threads.add(nextFilter);
 					nextFilter.start();
-					if (!filterlist.hasNext()) {
-						last = nextFilter;
-					}
+					//System.out.println(nextFilter.getState());
+					try {
+						nextFilter.join();
+					} catch (InterruptedException e) {}
+					//System.out.println(nextFilter.getState());
+						
 					filterlist = (ConcurrentFilter) filterlist.getNext();
-
+//					System.out.println(filterlist);
 				}
+				//System.out.println("out1");
 				
 				if (backgroundMode) {
-					threads.add(last);
-				} else {
-					try{
-						if(!last.equals(Thread.currentThread())) {
-							last.join();
-						}
-					} catch(InterruptedException e){}
-				}
-//				System.out.println("end here");
-				
-			} else if (command.contains("kill")) {
-				String[] killList = command.split("\\s+");
-				int killNumber = Integer.parseInt(killList[1]);
-				if (lastThreads.get(killNumber-1).isAlive()) {
-					if(killNumber > 1) {
-						int fromIndex = threads.indexOf(lastThreads.get(killNumber-2))+1;
-						int endIndex = threads.indexOf(lastThreads.get(killNumber-1));
-						for(int i = fromIndex; i <= endIndex; i++) {
-							if(threads.get(i).isAlive()) {
-								threads.get(i).interrupt();
-							}
-							
-						}
+					for (Thread t: threads) {
+						try {
+							t.join();
+						} catch (InterruptedException e) {
+							System.out.println("Interrupted.");
+						} 
 					}
-					
 				}
+//				System.out.println("out2");
+				
+			} else if (command.trim().equals("repl_jobs")) {
+				int number = 1;
+				for (Thread t: threads) {
+					if (t.isAlive()) {
+						System.out.println(number + ". " + t.getName() + " & ");
+						number++;
+					}
+				}
+			} else if (command.contains("kill")) {
+				String[] killList = command.split("//s+");
+				int killNumber = Integer.parseInt(killList[1]);
 				int alive = 1;
 				for (Thread t: threads) {
 					if (t.isAlive()){
@@ -91,6 +82,7 @@ public class ConcurrentREPL {
 				}
 			}
 		}
+//		System.out.println("out3");
 		s.close();
 		System.out.print(Message.GOODBYE);
 	}
