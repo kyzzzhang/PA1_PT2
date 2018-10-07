@@ -41,9 +41,11 @@ public class ConcurrentREPL {
 					command = command.substring(0, symbolIndex);
 				}
 				ConcurrentFilter filterlist = ConcurrentCommandBuilder.createFiltersFromCommand(command);
+				//System.out.println(filterlist.toString());
 				Thread last = Thread.currentThread();
 				while (filterlist != null) {
-					Thread nextFilter = new Thread(filterlist);
+//					System.out.println("enter");
+					Thread nextFilter = new Thread(filterlist,command);
 					nextFilter.start();
 					if (!filterlist.hasNext()) {
 						last = nextFilter;
@@ -56,11 +58,12 @@ public class ConcurrentREPL {
 					threads.add(last);
 				} else {
 					try{
-//						if (Thread.currentThread().getId() == 1) {
-						last.join();
-//						}
+						if(!last.equals(Thread.currentThread())) {
+							last.join();
+						}
 					} catch(InterruptedException e){}
 				}
+//				System.out.println("end here");
 				
 			} else if (command.contains("kill")) {
 				String[] killList = command.split("\\s+");

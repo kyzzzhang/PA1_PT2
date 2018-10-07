@@ -36,6 +36,9 @@ public class CdFilter extends ConcurrentFilter {
 	public void process() {
 		processLine("");
 		output.add("COMPLETED");
+//		for(String s:output) {
+//			System.out.println(s);
+//		}
 	}
 	
 	public String processLine(String line) {

@@ -11,7 +11,7 @@ public class WcFilter extends ConcurrentFilter {
 	
 	public void process() {
 		while(!isDone()) {
-			if(input != null) {
+//			if(input != null) {
 				String line = input.peek();
 				if(line != null && !line.equals("COMPLETED")) {
 					line = input.poll();
@@ -21,9 +21,9 @@ public class WcFilter extends ConcurrentFilter {
 					String[] cct = line.split("|");
 					charcount += cct.length;
 				}
-			}
+//			}
 		}
-		output.add(processLine(null));
+		output.add(linecount + " " + wordcount + " " + charcount);
 		output.add("COMPLETED");
 //		for(String s:output) {
 //			System.out.println(s);
@@ -34,7 +34,7 @@ public class WcFilter extends ConcurrentFilter {
 	public String processLine(String line) {
 //		//prints current result if ever passed a null
 //		if(line == null) {
-			return linecount + " " + wordcount + " " + charcount;
+			return null;
 //		}
 		
 //		if(isDone()) {
