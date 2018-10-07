@@ -32,6 +32,9 @@ public class RedirectFilter extends ConcurrentFilter {
 	
 	public void process() {
 		while(!isDone()) {
+//			for(String s : input) {
+//				System.out.println("input"+s);
+//			}
 			processLine(input.poll());
 		}
 	}

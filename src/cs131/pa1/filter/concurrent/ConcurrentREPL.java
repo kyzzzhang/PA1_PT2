@@ -14,7 +14,6 @@ public class ConcurrentREPL {
 		Scanner s = new Scanner(System.in);
 		System.out.print(Message.WELCOME);
 		LinkedList<Thread> threads = new LinkedList<Thread>();
-		LinkedList<String> commandsList =  new LinkedList<String>();
 		LinkedList<Thread> lastThreads = new LinkedList<Thread>();
 		String command;
 		while(true) {
@@ -41,36 +40,26 @@ public class ConcurrentREPL {
 					int symbolIndex = command.indexOf(symbol);
 					command = command.substring(0, symbolIndex);
 				}
-				
 				ConcurrentFilter filterlist = ConcurrentCommandBuilder.createFiltersFromCommand(command);
-				Thread last = new Thread();
-				while(filterlist != null) {
-//					System.out.println(filterlist.toString());
+				Thread last = Thread.currentThread();
+				while (filterlist != null) {
 					Thread nextFilter = new Thread(filterlist);
-//					threads.add(nextFilter);
-//					if(filterlist.getNext() == null) {
-//						lastThreads.add(nextFilter);
-//					}
 					nextFilter.start();
-					try {
-						nextFilter.join();
-					} catch (InterruptedException e) {}
+					if (!filterlist.hasNext()) {
+						last = nextFilter;
+					}
 					filterlist = (ConcurrentFilter) filterlist.getNext();
-					if ( filterlist.getNext() == null) {
-						last = new Thread(last);
-					}
-					
+
 				}
+				
 				if (backgroundMode) {
-					LinkedList<Thread> nextLine = new LinkedList<Thread>();
-					String concurrentCommand = s.nextLine();
-					for (Thread t: threads) {
-						try {
-							t.join();
-						} catch (InterruptedException e) {
-							System.out.println("Interrupted.");
-						} 
-					}
+					threads.add(last);
+				} else {
+					try{
+//						if (Thread.currentThread().getId() == 1) {
+						last.join();
+//						}
+					} catch(InterruptedException e){}
 				}
 				
 			} else if (command.contains("kill")) {
@@ -89,14 +78,14 @@ public class ConcurrentREPL {
 					}
 					
 				}
-//				int alive = 1;
-//				for (Thread t: threads) {
-//					if (t.isAlive()){
-//						if (alive == killNumber) {
-//							t.interrupt();
-//						}
-//					}
-//				}
+				int alive = 1;
+				for (Thread t: threads) {
+					if (t.isAlive()){
+						if (alive == killNumber) {
+							t.interrupt();
+						}
+					}
+				}
 			}
 		}
 		s.close();

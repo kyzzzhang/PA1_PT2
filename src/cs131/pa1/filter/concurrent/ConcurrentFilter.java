@@ -35,6 +35,13 @@ public abstract class ConcurrentFilter extends Filter implements Runnable{
 		return next;
 	}
 	
+	public boolean hasNext() {
+		if (this.next != null) {
+			return true;
+		}
+		return false;
+	}
+	
 	public void process(){
 		while (!isDone()){
 			String line = input.poll();

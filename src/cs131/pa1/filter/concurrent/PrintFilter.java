@@ -14,7 +14,8 @@ public class PrintFilter extends ConcurrentFilter {
 //		for(String s : input) {
 //			System.out.println("input"+s);
 //		}
-		while(!input.isEmpty()) {
+		while(!isDone()) {
+			//System.out.println(input.isEmpty());
 			String line = input.poll();
 			if(line !=null && !line.equals("COMPLETED")) {
 				processLine(line);
