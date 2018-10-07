@@ -10,7 +10,7 @@ public class PrintFilter extends ConcurrentFilter {
 			//System.out.println(input.isEmpty());
 			String line = input.peek();
 			if(line !=null && !line.equals("COMPLETED")) {
-				input.poll();
+				line = input.poll();
 				processLine(line);
 //				System.out.println(line);
 			}
